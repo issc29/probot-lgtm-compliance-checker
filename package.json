@@ -2,7 +2,7 @@
   "name": "probot-lgtm-compliance-checker",
   "version": "1.0.0",
   "private": true,
-  "description": "A Probot app",
+  "description": "App to check LGTM Compliance Rules",
   "author": "Isaac Cohen <issc29@gmail.com>",
   "license": "ISC",
   "repository": "https://github.com/issc29/probot-lgtm-compliance-checker.git",
