@@ -1,0 +1,21 @@
+[
+  {
+    "new": 1,
+    "query": {
+      "pack": "com.lgtm/javascript-queries",
+      "url": "https://lgtm.example.com/rules/3717280014/",
+      "properties": {
+        "tags": [
+          "security"
+        ],
+        "id": "js/duplicate-switch-case",
+        "name": "Duplicate switch case",
+        "severity": "error"
+      },
+      "language": "javascript",
+      "id": 3717280014,
+      "name": "XSS Vulnerability"
+    },
+    "fixed": 0
+  }
+]

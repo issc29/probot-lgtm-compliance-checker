@@ -1,0 +1,42 @@
+[
+  {
+    "new": 1,
+    "query": {
+      "pack": "com.lgtm/javascript-queries",
+      "url": "https://lgtm.example.com/rules/3717280014/",
+      "properties": {
+        "tags": [
+          "maintainability",
+          "correctness",
+          "external/cwe/cwe-561"
+        ],
+        "id": "js/duplicate-switch-case",
+        "name": "Duplicate switch case",
+        "severity": "warning"
+      },
+      "language": "javascript",
+      "id": 3717280014,
+      "name": "Duplicate switch case"
+    },
+    "fixed": 0
+  },
+  {
+    "new": 1,
+    "query": {
+      "pack": "com.lgtm/javascript-queries",
+      "url": "https://lgtm.example.com/rules/3717280014/",
+      "properties": {
+        "tags": [
+          "security"
+        ],
+        "id": "js/duplicate-switch-case",
+        "name": "Duplicate switch case",
+        "severity": "warning"
+      },
+      "language": "javascript",
+      "id": 3717280014,
+      "name": "Duplicate switch case"
+    },
+    "fixed": 0
+  }
+]
