@@ -3,8 +3,7 @@ const nock = require('nock')
 const myProbotApp = require('..')
 const { Probot } = require('probot')
 // Requiring our fixtures
-const checkSuitePayload = require('./fixtures/check_suite.requested')
-const checkRunSuccess = require('./fixtures/check_run.created')
+const pendingStatusPayload = require('./fixtures/error_status.json')
 const fs = require('fs')
 const path = require('path')
 
@@ -13,6 +12,7 @@ describe('My Probot app', () => {
   let mockCert
 
   beforeAll((done) => {
+    process.env = Object.assign(process.env, { GHE_HOST: 'ghe.com', LGTM_TOKEN: '12345', LGTM_URL: 'https://lgtm.com' })
     fs.readFile(path.join(__dirname, 'fixtures/mock-cert.pem'), (err, cert) => {
       if (err) return done(err)
       mockCert = cert
@@ -28,21 +28,20 @@ describe('My Probot app', () => {
   })
 
   test('creates a passing check', async () => {
-    nock('https://api.github.com')
-      .post('/app/installations/2/access_tokens')
-      .reply(200, { token: 'test' })
-
-    nock('https://api.github.com')
-      .post('/repos/hiimbex/testing-things/check-runs', (body) => {
-        body.started_at = '2018-10-05T17:35:21.594Z'
-        body.completed_at = '2018-10-05T17:35:53.683Z'
-        expect(body).toMatchObject(checkRunSuccess)
+    
+    /*
+    nock('https://api.ghe.com')
+      .post('/repos/issc29-org/hygieia/check-runs', (body) => {
+        expect(body).objectContaining({ status: 'pending' })
         return true
       })
       .reply(200)
-
-    // Receive a webhook event
-    await probot.receive({ name: 'check_suite', payload: checkSuitePayload })
+*/
+    nock.recorder.rec()
+      console.log('start')
+      console.log({ event: 'status', payload: pendingStatusPayload })
+    await probot.receive({ event: 'status', id: 'abc', payload: pendingStatusPayload })
+    console.log('end')
   })
 
   afterEach(() => {
@@ -50,9 +49,3 @@ describe('My Probot app', () => {
     nock.enableNetConnect()
   })
 })
-
-// For more information about testing with Jest see:
-// https://facebook.github.io/jest/
-
-// For more information about testing with Nock see:
-// https://github.com/nock/nock

@@ -1,23 +1,54 @@
-# probot-lgtm-compliance-checker
+# LGTM Compliancer Checker Probot App
 
-> A GitHub App built with [Probot](https://github.com/probot/probot) that A Probot app
+A GitHub Probot App that ensures that Pull Requests meet a minimum compliance threshold when using LGTM Enteprise
 
-## Setup
 
-```sh
-# Install dependencies
-npm install
+## Features
+- Outputs a [GitHub Check](https://developer.github.com/v3/checks/) depending on the configuration of the LGTM Compliance 
+- YAML Configuration file located in a repository controls the compliance policies
+- Can define policies based on the alert severity level, and the alert tags
 
-# Run the bot
-npm start
+## Get Started
+
+1. Deploy and Install the GitHub App
+2. [Recommended] Create a file `.github/lgtm-compliance.yml` as described in the [How it Works](#How-it-Works) section to configure settings (and override defaults)
+4. Open a Pull Request and after LGTM has run a GitHub Check will be added to the Pull Request
+
+## How it Works
+
+A `.github/lgtm-compliance.yml` file is required in order to define your compliance policies per repository. For each language you can specify a minimum severty level as well as tags that are required. If any alert meets the minimum severity and contains any of the tags, the GitHub Check will result in a failure. Otherwise it will succeed.
+
+Severity: recommendation < warning < error < ALL
+Tags: An array of required tags OR 'ALL'
+
+```yml
+javascript:
+  severity: 'warning'
+  tags: ['maintainability', 'security']
+java:
+  severity: 'ALL'
+  tags: ['security']
+python:
+  severity: 'error'
+  tags: 'ALL'
+cpp:
+  severity: 'error'
+  tags: ['security']
+csharp:
+  severity: 'error'
+  tags: ['security']
+go:
+  severity: 'error'
+  tags: ['security']
 ```
 
-## Contributing
+When setting up this Probot App you can also set a number of Environment Variables
 
-If you have suggestions for how probot-lgtm-compliance-checker could be improved, or want to report a bug, open an issue! We'd love all and any contributions.
+Possible Environment Variables:
+- LGTM_URL [Required] - URL to LGTM Enterprise
+- LGTM_TOKEN [Required] - Admin token to access LGTM API
+- GHE_HOST [default: 'github.com'] - Sets the GitHub Enterprise Host URL
 
-For more, check out the [Contributing Guide](CONTRIBUTING.md).
+## Deployment
 
-## License
-
-[ISC](LICENSE) © 2019 Isaac Cohen <issc29@gmail.com>
+See [docs/deploy.md](docs/deploy.md) if you would like to run your own instance of this app.

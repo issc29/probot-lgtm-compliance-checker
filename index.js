@@ -16,22 +16,20 @@ module.exports = app => {
   const logger = app.log
 
   async function receivedStatus (context) {
+    console.log(lgtmToken)
     const startTime = new Date()
     const params = context.repo({ path: '.github/lgtm-compliance.yml' })
     const { state: statusState } = context.payload
 
-    console.log(util.inspect(context.payload))
-
     if (!utils.isValidLGTMToken(lgtmToken)) {
       return
     }
-
     console.log('Received Webhook')
     console.log('state: ' + context.payload.state + ' context: ' + context.payload.context)
-    console.log(util.inspect(context.payload))
 
     if (!utils.isSuccessState(statusState)) {
-      utils.createStatus(context, startTime)
+      await utils.createStatus(context, startTime)
+      console.log('end')
       return
     }
 
