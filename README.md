@@ -11,7 +11,8 @@ A GitHub Probot App that ensures that Pull Requests meet a minimum compliance th
 ## Get Started
 
 1. Deploy and Install the GitHub App
-2. [Recommended] Create a file `.github/lgtm-compliance.yml` as described in the [How it Works](#How-it-Works) section to configure settings (and override defaults)
+2. Ensure that [Pull Request Integration](https://help.semmle.com/lgtm-enterprise/user/help/managing-automated-code-review.html#enabling-pr-integration) has been turned on in LGTM
+3. [Required] Create a file `.github/lgtm-compliance.yml` as described in the [How it Works](#How-it-Works) section to configure settings (and override defaults)
 4. Open a Pull Request and after LGTM has run a GitHub Check will be added to the Pull Request
 
 ## How it Works
