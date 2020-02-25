@@ -1,5 +1,3 @@
-
-const util = require('util')
 const utils = require('./lib/utils')
 const lgtmUtils = require('./lib/lgtmUtils')
 
@@ -33,12 +31,14 @@ module.exports = app => {
       return
     }
 
-    context.github.repos.getContents(params).then((configContent) => {
-      logger.info(configContent)
-      const lgtmInfo = { URL: lgtmURL, Token: lgtmToken }
-      lgtmUtils.processLGTMCodeReview(configContent, context, lgtmInfo, logger)
-    }, (reason) => {
-      logger.info(`NOTE: config file not found for Owner: ${params.owner} Repo: ${params.repo}`)
-    })
+    context.github.repos.getContents(params)
+      .then((configContent) => {
+        logger.info(configContent)
+        const lgtmInfo = { URL: lgtmURL, Token: lgtmToken }
+        lgtmUtils.processLGTMCodeReview(configContent, context, lgtmInfo, logger)
+      })
+      .catch(() => {
+        logger.info(`NOTE: config file not found for Owner: ${params.owner} Repo: ${params.repo}`)
+      })
   }
 }

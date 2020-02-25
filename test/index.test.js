@@ -1,47 +1,60 @@
 const nock = require('nock')
 // Requiring our app implementation
 const myProbotApp = require('..')
-const { Probot } = require('probot')
+const { createProbot } = require('probot')
 // Requiring our fixtures
-const pendingStatusPayload = require('./fixtures/error_status.json')
-const fs = require('fs')
-const path = require('path')
+const errorStatusPayload = require('./fixtures/error_status.json')
+const pendingStatusPayload = require('./fixtures/pending_status.json')
 
-describe('My Probot app', () => {
+describe('index', () => {
   let probot
-  let mockCert
-
-  beforeAll((done) => {
-    process.env = Object.assign(process.env, { GHE_HOST: 'ghe.com', LGTM_TOKEN: '12345', LGTM_URL: 'https://lgtm.com' })
-    fs.readFile(path.join(__dirname, 'fixtures/mock-cert.pem'), (err, cert) => {
-      if (err) return done(err)
-      mockCert = cert
-      done()
-    })
-  })
 
   beforeEach(() => {
     nock.disableNetConnect()
-    probot = new Probot({ id: 123, cert: mockCert })
-    // Load our app into probot
+    probot = createProbot({ id: 1, cert: 'test', githubToken: 'test' })
     probot.load(myProbotApp)
+
+    nock('https://api.github.com')
+      .post('/app/installations/34/access_tokens')
+      .reply(200, { token: 'test' })
   })
 
-  test('creates a passing check', async () => {
-    
-    /*
-    nock('https://api.ghe.com')
-      .post('/repos/issc29-org/hygieia/check-runs', (body) => {
-        expect(body).objectContaining({ status: 'pending' })
+  test('error status', async () => {
+    nock('https://octodemo.com')
+      .post('/api/v3/repos/issc29-org/hygieia/check-runs', (body) => {
+        expect(body).toEqual(expect.objectContaining({
+          name: 'LGTM Compliance: Java',
+          head_sha: '571c8060e3a7bfe01fb1e00496e1b66681bb7eda',
+          status: 'completed',
+          details_url:
+         'https://lgtm.octodemo.com/projects/octodemo-repos/issc29-org/hygieia/rev/pr-7360af19c9f24774615b71538b0884baa8b924fc',
+          conclusion: 'failure',
+          output: {
+            title: 'LGTM Compliance Failed - LGTM Analysis Failure',
+            summary:
+            'LGTM Analysis Failure: This pull request can\\\'t be analyzed because it has merge conflicts'
+          }
+        }))
         return true
       })
       .reply(200)
-*/
-    nock.recorder.rec()
-      console.log('start')
-      console.log({ event: 'status', payload: pendingStatusPayload })
-    await probot.receive({ event: 'status', id: 'abc', payload: pendingStatusPayload })
-    console.log('end')
+    await probot.receive({ name: 'status', id: '3b5c95ca-4db0-11ea-8785-c9b9fdcbd509', payload: errorStatusPayload })
+  })
+
+  test('pending status', async () => {
+    nock('https://octodemo.com')
+      .post('/api/v3/repos/issc29-org/hygieia/check-runs', (body) => {
+        expect(body).toEqual(expect.objectContaining({
+          name: 'LGTM Compliance: JavaScript',
+          head_sha: '99c67093f5da9d55baabd30dcbf24dc21d0eb720',
+          status: 'queued',
+          details_url:
+        'https://lgtm.octodemo.com/projects/octodemo-repos/issc29-org/hygieia/rev/pr-640d9a519959c5036f704887abb8e9c94bfe4624'
+        }))
+        return true
+      })
+      .reply(200)
+    await probot.receive({ name: 'status', id: '3b5c95ca-4db0-11ea-8785-c9b9fdcbd509', payload: pendingStatusPayload })
   })
 
   afterEach(() => {
